@@ -3,17 +3,45 @@ apply plugin: 'com.android.application'
 android {
     namespace "com.nls.entertainment"
     compileSdk 34
+
     defaultConfig {
         applicationId "com.nls.entertainment.app"
         minSdk 22
         targetSdk 34
         versionCode 1
         versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+repositories {
+    flatDir{
+        dirs 'libs'
     }
 }
 
 dependencies {
-    // Esto es lo que soluciona el error de Capacitor
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    
+    // LIBRERÍAS DE CAPACITOR (Solucionan tu error de compilación)
     implementation "com.capacitorjs:android:5.7.0"
+    implementation "com.capacitorjs:core:5.7.0"
+    
+    // Soporte para Android y Material Design
     implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 }
