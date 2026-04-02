@@ -12,8 +12,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        // FUNDAMENTAL: Aquí es donde Gradle encontrará Capacitor
-        maven { url "https://jitpack.io" }
     }
 }
 
