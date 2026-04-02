@@ -1,0 +1,21 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace "com.nls.entertainment"
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.nls.entertainment.app"
+        minSdk 22
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+}
