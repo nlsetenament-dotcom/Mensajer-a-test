@@ -1,24 +1,19 @@
       - name: Build APK
         run: |
-          # 1. Instalar dependencias y generar la carpeta android
           npm install
           npx cap add android
-          npx cap copy
           npx cap sync
-
+          
           cd android
           
-          # 2. CREAR EL ARREGLO PARA LAS CLASES DUPLICADAS (Directo al archivo)
-          # Esto le dice a Gradle que ignore las versiones viejas de Kotlin
-          echo "configurations.all {
-              resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-                  if (details.requested.group == 'org.jetbrains.kotlin' && 
-                     (details.requested.name.contains('jdk7') || details.requested.name.contains('jdk8'))) {
-                      details.useVersion '1.8.22'
-                  }
-              }
-          }" >> build.gradle
+          # 1. Forzar propiedades de AndroidX
+          echo "android.useAndroidX=true" >> gradle.properties
+          echo "android.enableJetifier=true" >> gradle.properties
+          
+          # 2. Inyectar la solución de duplicados al final del build.gradle principal
+          # Usamos un formato de una sola línea para evitar errores de sintaxis en el YAML
+          echo -e "\nconfigurations.all {\n    resolutionStrategy.eachDependency { details ->\n        if (details.requested.group == 'org.jetbrains.kotlin' && details.requested.name.contains('jdk')) {\n            details.useVersion '1.8.22'\n        }\n    }\n}" >> build.gradle
 
-          # 3. Dar permisos y compilar
+          # 3. Compilar
           chmod +x gradlew
-          ./gradlew clean assembleDebug --stacktrace
+          ./gradlew assembleDebug --stacktrace
