@@ -1,14 +1,24 @@
       - name: Build APK
         run: |
-          cd android
-          # 1. Forzamos la resolución de conflictos de Kotlin en el archivo gradle.properties
-          echo "android.useAndroidX=true" >> gradle.properties
-          echo "android.enableJetifier=true" >> gradle.properties
-          echo "android.nonTransitiveRClass=true" >> gradle.properties
-          
-          # 2. Truco para eliminar las librerías duplicadas de Kotlin (Stdlib-jdk7/8)
-          sed -i 's/dependencies {/dependencies {\n    constraints {\n        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22") { because("replaces old jdk7") }\n        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22") { because("replaces old jdk8") }\n    }/' app/build.gradle
+          # 1. Instalar dependencias y generar la carpeta android
+          npm install
+          npx cap add android
+          npx cap copy
+          npx cap sync
 
-          # 3. Ejecutar la compilación
+          cd android
+          
+          # 2. CREAR EL ARREGLO PARA LAS CLASES DUPLICADAS (Directo al archivo)
+          # Esto le dice a Gradle que ignore las versiones viejas de Kotlin
+          echo "configurations.all {
+              resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+                  if (details.requested.group == 'org.jetbrains.kotlin' && 
+                     (details.requested.name.contains('jdk7') || details.requested.name.contains('jdk8'))) {
+                      details.useVersion '1.8.22'
+                  }
+              }
+          }" >> build.gradle
+
+          # 3. Dar permisos y compilar
           chmod +x gradlew
-          ./gradlew assembleDebug --stacktrace
+          ./gradlew clean assembleDebug --stacktrace
