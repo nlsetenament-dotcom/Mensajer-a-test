@@ -19,8 +19,8 @@ android {
 }
 
 dependencies {
-    // Cambiamos a la versión 6.0.0 para asegurar que la encuentre
-    implementation "com.getcapacitor:android:6.0.0"
+    // Volvemos a la versión 5.7.0 pero asegurando el grupo correcto
+    implementation "com.capacitorjs:android:5.7.0"
     
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
