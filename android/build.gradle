@@ -1,12 +1,9 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-
 buildscript {
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        // Versión de Gradle compatible con tu entorno de 11° grado
         classpath 'com.android.tools.build:gradle:8.2.1'
     }
 }
@@ -15,8 +12,8 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        // Repositorio necesario para encontrar com.capacitorjs:android
-        maven { url "https://repo1.maven.org/maven2/" }
+        // FUNDAMENTAL: Aquí es donde Gradle encontrará Capacitor
+        maven { url "https://jitpack.io" }
     }
 }
 
