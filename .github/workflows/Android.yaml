@@ -8,7 +8,7 @@ jobs:
       - name: Checkout Source
         uses: actions/checkout@v4
 
-      - name: Setup Java 17 # IMPORTANTE PARA GRADLE 8
+      - name: Setup Java 17
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
@@ -18,6 +18,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
+
+      - name: Clean Gradle Cache # PASO CLAVE PARA EL ERROR DEL JAR
+        run: |
+          rm -rf ~/.gradle/caches/
+          rm -rf ~/.gradle/wrapper/
 
       - name: Install Dependencies
         run: |
@@ -29,11 +34,11 @@ jobs:
           npx cap add android || echo "Ya existe"
           npx cap copy android
 
-      - name: Build APK (With Clean)
+      - name: Build APK (Force Fresh)
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew clean assembleDebug # El 'clean' ayuda a evitar el error del Jar
+          ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
