@@ -10,15 +10,6 @@ android {
         targetSdk 34
         versionCode 1
         versionName "1.0"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
     }
     
     compileOptions {
@@ -27,21 +18,11 @@ android {
     }
 }
 
-repositories {
-    flatDir{
-        dirs 'libs'
-    }
-}
-
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    
-    // LIBRERÍAS DE CAPACITOR (Solucionan tu error de compilación)
+    // Estas son las que fallaban antes
     implementation "com.capacitorjs:android:5.7.0"
     implementation "com.capacitorjs:core:5.7.0"
     
-    // Soporte para Android y Material Design
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 }
