@@ -12,6 +12,8 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        // Repositorio de respaldo para Capacitor
+        maven { url "https://jitpack.io" }
     }
 }
 
