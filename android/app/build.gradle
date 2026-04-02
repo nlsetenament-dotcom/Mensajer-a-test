@@ -1,11 +1,8 @@
-plugins {
-    id 'com.android.application'
-}
+apply plugin: 'com.android.application'
 
 android {
     namespace "com.nls.entertainment"
     compileSdk 34
-
     defaultConfig {
         applicationId "com.nls.entertainment.app"
         minSdk 22
@@ -16,6 +13,7 @@ android {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"
+    // Esto es lo que soluciona el error de Capacitor
+    implementation "com.capacitorjs:android:5.7.0"
     implementation 'androidx.appcompat:appcompat:1.6.1'
 }
