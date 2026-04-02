@@ -1,0 +1,6 @@
+{
+  "appId": "com.nls.mensajeria",
+  "appName": "SocialMsg",
+  "webDir": "public",
+  "bundledWebRuntime": false
+}
