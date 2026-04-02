@@ -12,7 +12,8 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        // Repositorio de respaldo para Capacitor
+        // Repositorio oficial de Ionic/Capacitor
+        maven { url "https://plugins.gradle.org/m2/" }
         maven { url "https://jitpack.io" }
     }
 }
