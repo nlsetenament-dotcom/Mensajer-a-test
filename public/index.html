@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+  <title>SocialMsg</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{min-height:100dvh;display:flex;flex-direction:column;align-items:center;
+      justify-content:center;padding:1.5rem;font-family:'Plus Jakarta Sans',sans-serif;
+      background:#08090f;color:#eceef8;overflow:hidden}
+    .orb{position:fixed;border-radius:50%;filter:blur(80px);opacity:.18;pointer-events:none;animation:fl 12s ease-in-out infinite}
+    .o1{width:300px;height:300px;background:#7b68ee;top:-60px;left:-60px}
+    .o2{width:260px;height:260px;background:#ee68a4;bottom:-50px;right:-50px;animation-delay:-5s}
+    .o3{width:180px;height:180px;background:#68eeb8;top:55%;left:55%;animation-delay:-9s}
+    @keyframes fl{0%,100%{transform:translate(0,0)}50%{transform:translate(18px,-18px)}}
+    .card{position:relative;z-index:1;width:100%;max-width:390px;background:#10121c;
+      border:1px solid #1c1f2e;border-radius:24px;padding:2rem 1.75rem;
+      box-shadow:0 20px 60px rgba(0,0,0,.5);animation:up .35s cubic-bezier(.22,1,.36,1)}
+    @keyframes up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .logo{font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;
+      background:linear-gradient(135deg,#7b68ee,#ee68a4,#68eeb8);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px}
+    .sub{color:#525870;font-size:.85rem;margin:.25rem 0 1.75rem}
+    .tabs{display:flex;background:#0c0e18;border-radius:12px;padding:4px;margin-bottom:1.5rem}
+    .tab{flex:1;padding:.55rem;text-align:center;border-radius:9px;cursor:pointer;
+      font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;
+      color:#525870;border:none;background:none;transition:all .2s}
+    .tab.on{background:#7b68ee;color:#fff}
+    .field{margin-bottom:.9rem}
+    label{display:block;font-size:.72rem;color:#525870;font-weight:600;
+      margin-bottom:.3rem;letter-spacing:.04em;text-transform:uppercase}
+    input{width:100%;background:#0c0e18;border:1.5px solid #1c1f2e;border-radius:12px;
+      color:#eceef8;padding:.75rem 1rem;font-family:'Plus Jakarta Sans',sans-serif;
+      font-size:.95rem;outline:none;transition:border-color .2s;-webkit-appearance:none}
+    input:focus{border-color:#7b68ee}
+    input::placeholder{color:#525870}
+    .btn{width:100%;padding:.85rem;background:linear-gradient(135deg,#7b68ee,#ee68a4);
+      color:#fff;border:none;border-radius:12px;font-family:'Syne',sans-serif;
+      font-size:.95rem;font-weight:700;cursor:pointer;margin-top:.5rem;
+      letter-spacing:.02em;transition:opacity .15s,transform .15s}
+    .btn:active{transform:scale(.97);opacity:.9}
+    .btn:disabled{opacity:.5;cursor:not-allowed}
+    .err{background:rgba(238,100,100,.1);border:1px solid rgba(238,100,100,.3);
+      color:#ee8888;border-radius:10px;padding:.6rem 1rem;font-size:.82rem;margin-bottom:1rem;display:none}
+    .err.on{display:block}
+    .fs{display:none;flex-direction:column}
+    .fs.on{display:flex}
+  </style>
+</head>
+<body>
+<div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+<div class="card">
+  <div class="logo">SocialMsg</div>
+  <p class="sub">Conecta con quien quieras 💬</p>
+  <div class="tabs">
+    <button class="tab on" onclick="sw('login')">Entrar</button>
+    <button class="tab"    onclick="sw('reg')">Registrarse</button>
+  </div>
+  <div id="err" class="err"></div>
+  <div id="fl" class="fs on">
+    <div class="field"><label>Email</label><input type="email" id="le" placeholder="tu@email.com"/></div>
+    <div class="field"><label>Contraseña</label><input type="password" id="lp" placeholder="••••••••"/></div>
+    <button class="btn" id="bl" onclick="login()">Entrar →</button>
+  </div>
+  <div id="fr" class="fs">
+    <div class="field"><label>Username</label><input type="text" id="ru" placeholder="minombre"/></div>
+    <div class="field"><label>Email</label><input type="email" id="re" placeholder="tu@email.com"/></div>
+    <div class="field"><label>Contraseña</label><input type="password" id="rp" placeholder="Mínimo 6 caracteres"/></div>
+    <button class="btn" id="br" onclick="reg()">Crear cuenta →</button>
+  </div>
+</div>
+<script>
+if(localStorage.getItem('sm_token'))location.href='/app.html';
+function sw(t){
+  document.getElementById('fl').classList.toggle('on',t==='login');
+  document.getElementById('fr').classList.toggle('on',t==='reg');
+  document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('on',(i===0&&t==='login')||(i===1&&t==='reg')));
+  document.getElementById('err').classList.remove('on');
+}
+function showErr(m){const e=document.getElementById('err');e.textContent=m;e.classList.add('on')}
+async function login(){
+  const email=document.getElementById('le').value.trim();
+  const pass=document.getElementById('lp').value;
+  if(!email||!pass)return showErr('Completa todos los campos.');
+  const btn=document.getElementById('bl');btn.disabled=true;btn.textContent='Entrando...';
+  try{
+    const r=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});
+    const d=await r.json();
+    if(!r.ok)return showErr(d.message||'Credenciales incorrectas.');
+    localStorage.setItem('sm_token',d.token);localStorage.setItem('sm_user',JSON.stringify(d.user));
+    location.href='/app.html';
+  }catch{showErr('Error de conexión.');}
+  finally{btn.disabled=false;btn.textContent='Entrar →';}
+}
+async function reg(){
+  const username=document.getElementById('ru').value.trim();
+  const email=document.getElementById('re').value.trim();
+  const pass=document.getElementById('rp').value;
+  if(!username||!email||!pass)return showErr('Completa todos los campos.');
+  if(pass.length<6)return showErr('Mínimo 6 caracteres.');
+  const btn=document.getElementById('br');btn.disabled=true;btn.textContent='Creando cuenta...';
+  try{
+    const r=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,email,password:pass})});
+    const d=await r.json();
+    if(!r.ok)return showErr(d.message||'Error al registrarse.');
+    localStorage.setItem('sm_token',d.token);localStorage.setItem('sm_user',JSON.stringify(d.user));
+    location.href='/app.html';
+  }catch{showErr('Error de conexión.');}
+  finally{btn.disabled=false;btn.textContent='Crear cuenta →';}
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'){if(document.getElementById('fl').classList.contains('on'))login();else reg();}});
+</script>
+</body>
+</html>

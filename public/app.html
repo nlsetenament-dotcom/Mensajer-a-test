@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+  <title>SocialMsg</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+<div id="app">
+
+  <!-- ══ MAIN CONTENT ══════════════════════════════════════════════════════ -->
+  <div id="main">
+
+    <!-- ── CHATS ──────────────────────────────────────────────────────── -->
+    <div id="sec-chats" class="sec on">
+      <div class="topbar">
+        <span class="topbar-title">Mensajes</span>
+        <button class="topbar-btn" onclick="toggleTheme()" title="Tema">
+          <svg id="theme-icon" viewBox="0 0 24 24" style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2">
+            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+          </svg>
+        </button>
+        <button class="topbar-btn" onclick="openModal('modal-search')" title="Nuevo chat">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+      </div>
+      <div class="searchbar">
+        <div class="searchbar-wrap">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input placeholder="Buscar conversación..." oninput="filterItems('conv-list',this.value)"/>
+        </div>
+      </div>
+      <div class="list" id="conv-list"></div>
+    </div>
+
+    <!-- ── GRUPOS ─────────────────────────────────────────────────────── -->
+    <div id="sec-groups" class="sec">
+      <div class="topbar">
+        <span class="topbar-title">Grupos</span>
+        <button class="topbar-btn" onclick="openModal('modal-group')" title="Crear grupo">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+      </div>
+      <div class="list" id="group-list"></div>
+    </div>
+
+    <!-- ── HISTORIAS ──────────────────────────────────────────────────── -->
+    <div id="sec-stories" class="sec">
+      <div class="topbar">
+        <span class="topbar-title">Historias <span style="font-size:.7rem;color:var(--muted);font-weight:400">· 24h</span></span>
+        <button class="topbar-btn" onclick="openStoryModal()" title="Nueva historia">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+      </div>
+      <div class="stories" id="stories-grid"></div>
+    </div>
+
+    <!-- ── NOTAS ──────────────────────────────────────────────────────── -->
+    <div id="sec-notes" class="sec">
+      <div class="topbar"><span class="topbar-title">Notas</span></div>
+      <div class="note-compose">
+        <textarea id="note-ta" class="note-ta" placeholder="¿Qué estás pensando? (máx. 280 car.)" maxlength="280" rows="2"></textarea>
+        <button class="send" onclick="publishNote()">
+          <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+      <div class="notes-feed" id="notes-feed"></div>
+    </div>
+
+    <!-- ── AJUSTES ────────────────────────────────────────────────────── -->
+    <div id="sec-settings" class="sec">
+      <div class="topbar">
+        <span class="topbar-title">Ajustes</span>
+        <button class="topbar-btn" onclick="toggleTheme()">
+          <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2">
+            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+          </svg>
+        </button>
+      </div>
+      <div class="settings-scroll">
+
+        <!-- Perfil card -->
+        <div class="profile-card">
+          <div id="prof-av"></div>
+          <div style="text-align:center">
+            <div class="profile-name" id="prof-name">—</div>
+            <div class="profile-email" id="prof-email">—</div>
+            <div class="profile-email" id="prof-since" style="margin-top:2px">—</div>
+          </div>
+          <button class="change-photo-btn" onclick="document.getElementById('av-file').click()">📷 Cambiar foto</button>
+          <input type="file" id="av-file" accept="image/*" style="display:none" onchange="uploadAvatar()"/>
+        </div>
+
+        <!-- Cuenta -->
+        <div class="settings-section">
+          <div class="settings-section-title">Cuenta</div>
+          <div class="settings-row" onclick="openEditProfile()">
+            <div class="settings-row-icon" style="background:rgba(123,104,238,.15)">✏️</div>
+            <div class="settings-row-info">
+              <div class="settings-row-label">Editar perfil</div>
+              <div class="settings-row-sub">Username y biografía</div>
+            </div>
+            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+          <div class="settings-row" onclick="openChangePw()">
+            <div class="settings-row-icon" style="background:rgba(104,180,238,.15)">🔒</div>
+            <div class="settings-row-info">
+              <div class="settings-row-label">Cambiar contraseña</div>
+              <div class="settings-row-sub">Actualiza tu clave de acceso</div>
+            </div>
+            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+
+        <!-- Apariencia -->
+        <div class="settings-section">
+          <div class="settings-section-title">Apariencia</div>
+          <div class="settings-row" onclick="toggleTheme()">
+            <div class="settings-row-icon" style="background:rgba(247,165,74,.15)">🌗</div>
+            <div class="settings-row-info">
+              <div class="settings-row-label">Tema claro / oscuro</div>
+              <div class="settings-row-sub">Cambia el aspecto de la app</div>
+            </div>
+            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+
+        <!-- Sesión -->
+        <div class="settings-section">
+          <div class="settings-section-title">Sesión</div>
+          <div class="settings-row" onclick="confirmLogout()">
+            <div class="settings-row-icon" style="background:rgba(238,104,104,.15)">🚪</div>
+            <div class="settings-row-info">
+              <div class="settings-row-label">Cerrar sesión</div>
+              <div class="settings-row-sub">Salir de tu cuenta</div>
+            </div>
+            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+          <div class="settings-row" onclick="confirmDelete()">
+            <div class="settings-row-icon" style="background:rgba(238,68,68,.15)">🗑️</div>
+            <div class="settings-row-info">
+              <div class="settings-row-label" style="color:#ee4444">Borrar cuenta</div>
+              <div class="settings-row-sub">Elimina tu cuenta permanentemente</div>
+            </div>
+            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+
+        <!-- Creator credit -->
+        <div class="creator">✦ Creador: LUIS BRAVO ✦</div>
+        <div class="creator-glow">Hecho con 💜 — SocialMsg v1.0</div>
+
+      </div>
+    </div>
+
+  </div><!-- #main -->
+
+  <!-- ══ BOTTOM NAV ════════════════════════════════════════════════════════ -->
+  <nav id="nav">
+    <button class="nav-btn active" data-sec="chats" onclick="nav('chats')">
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      Chats
+    </button>
+    <button class="nav-btn" data-sec="groups" onclick="nav('groups')">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      Grupos
+    </button>
+    <button class="nav-btn" data-sec="stories" onclick="nav('stories')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+      Historias
+    </button>
+    <button class="nav-btn" data-sec="notes" onclick="nav('notes')">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      Notas
+    </button>
+    <button class="nav-btn" data-sec="settings" onclick="nav('settings')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      Ajustes
+    </button>
+  </nav>
+
+</div><!-- #app -->
+
+<!-- ══ CHAT SCREEN (full overlay) ════════════════════════════════════════════ -->
+<div id="chat-screen">
+  <div class="chat-hdr">
+    <button class="back-btn" onclick="closeChat()">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div id="chat-av"></div>
+    <div class="chat-hdr-info">
+      <div class="chat-hdr-name" id="chat-name">—</div>
+      <div class="chat-hdr-sub" id="chat-sub">Chat</div>
+    </div>
+    <button class="topbar-btn" id="chat-more-btn" onclick="showChatOptions()" style="display:none">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+    </button>
+  </div>
+  <div class="msgs" id="chat-msgs"></div>
+  <div class="input-bar">
+    <textarea class="msg-ta" id="msg-ta" placeholder="Escribe un mensaje..." rows="1"></textarea>
+    <button class="send" onclick="sendMsg()">
+      <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ══ MODALES ════════════════════════════════════════════════════════════════ -->
+
+<!-- Buscar usuario -->
+<div class="overlay" id="modal-search" onclick="if(event.target===this)closeModal('modal-search')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Nueva conversación</div>
+    <div class="form-field">
+      <label class="form-label">Buscar por username o correo</label>
+      <input class="form-input" id="search-q" placeholder="Ej: luis o luis@email.com" oninput="onSearch()" autocomplete="off"/>
+    </div>
+    <div id="search-res" style="max-height:300px;overflow-y:auto"></div>
+    <button class="modal-btn ghost" onclick="closeModal('modal-search')">Cancelar</button>
+  </div>
+</div>
+
+<!-- Crear grupo -->
+<div class="overlay" id="modal-group" onclick="if(event.target===this)closeModal('modal-group')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Crear grupo</div>
+    <div class="form-field">
+      <label class="form-label">Nombre *</label>
+      <input class="form-input" id="g-name" placeholder="Ej: Amigos del trabajo"/>
+    </div>
+    <div class="form-field">
+      <label class="form-label">Descripción</label>
+      <input class="form-input" id="g-desc" placeholder="Opcional..."/>
+    </div>
+    <button class="modal-btn" onclick="createGroup()">Crear grupo</button>
+    <button class="modal-btn ghost" onclick="closeModal('modal-group')">Cancelar</button>
+  </div>
+</div>
+
+<!-- Agregar miembro -->
+<div class="overlay" id="modal-add-member" onclick="if(event.target===this)closeModal('modal-add-member')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Agregar miembro</div>
+    <input class="form-input" id="add-m-q" placeholder="Buscar usuario..." oninput="onAddMember()" autocomplete="off"/>
+    <div id="add-m-res" style="max-height:260px;overflow-y:auto;margin-top:.75rem"></div>
+    <button class="modal-btn ghost" style="margin-top:.75rem" onclick="closeModal('modal-add-member')">Cerrar</button>
+  </div>
+</div>
+
+<!-- Opciones de chat de grupo -->
+<div class="overlay" id="modal-chat-opts" onclick="if(event.target===this)closeModal('modal-chat-opts')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="chat-opts-title">Opciones del grupo</div>
+    <button class="modal-btn" style="background:var(--surface3);color:var(--text2)" onclick="closeModal('modal-chat-opts');openModal('modal-add-member')">👤 Agregar miembro</button>
+    <button class="modal-btn danger" style="margin-top:.5rem" onclick="closeModal('modal-chat-opts');leaveGroup()">🚪 Salir del grupo</button>
+    <button class="modal-btn ghost" onclick="closeModal('modal-chat-opts')">Cancelar</button>
+  </div>
+</div>
+
+<!-- Nueva historia -->
+<div class="overlay" id="modal-story" onclick="if(event.target===this)closeModal('modal-story')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Nueva historia <span style="font-size:.72rem;color:var(--muted);font-weight:400">· desaparece en 24h</span></div>
+    <div class="form-field">
+      <label class="form-label">Texto</label>
+      <textarea class="form-textarea" id="story-txt" placeholder="¿Qué quieres compartir?" maxlength="200"></textarea>
+    </div>
+    <div class="form-field">
+      <label class="form-label">Color de fondo</label>
+      <div class="color-row" id="color-pick"></div>
+    </div>
+    <button class="modal-btn" onclick="createStory()">Publicar historia</button>
+    <button class="modal-btn ghost" onclick="closeModal('modal-story')">Cancelar</button>
+  </div>
+</div>
+
+<!-- Editar perfil -->
+<div class="overlay" id="modal-edit" onclick="if(event.target===this)closeModal('modal-edit')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Editar perfil</div>
+    <div class="form-field">
+      <label class="form-label">Username</label>
+      <input class="form-input" id="edit-username" placeholder="tu_username"/>
+    </div>
+    <div class="form-field">
+      <label class="form-label">Biografía</label>
+      <textarea class="form-textarea" id="edit-bio" placeholder="Cuéntanos algo sobre ti..." maxlength="150"></textarea>
+    </div>
+    <button class="modal-btn" onclick="saveProfile()">Guardar cambios</button>
+    <button class="modal-btn ghost" onclick="closeModal('modal-edit')">Cancelar</button>
+  </div>
+</div>
+
+<!-- Cambiar contraseña -->
+<div class="overlay" id="modal-pw" onclick="if(event.target===this)closeModal('modal-pw')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Cambiar contraseña</div>
+    <div class="form-field">
+      <label class="form-label">Contraseña actual</label>
+      <input class="form-input" id="pw-cur" type="password" placeholder="••••••••"/>
+    </div>
+    <div class="form-field">
+      <label class="form-label">Nueva contraseña</label>
+      <input class="form-input" id="pw-new" type="password" placeholder="Mínimo 6 caracteres"/>
+    </div>
+    <button class="modal-btn" onclick="changePw()">Actualizar contraseña</button>
+    <button class="modal-btn ghost" onclick="closeModal('modal-pw')">Cancelar</button>
+  </div>
+</div>
+
+<!-- Confirmar logout -->
+<div class="overlay" id="modal-logout" onclick="if(event.target===this)closeModal('modal-logout')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">¿Cerrar sesión?</div>
+    <p style="color:var(--text2);font-size:.88rem;margin-bottom:1rem">Tendrás que volver a iniciar sesión la próxima vez.</p>
+    <button class="modal-btn danger" onclick="logout()">Sí, cerrar sesión</button>
+    <button class="modal-btn ghost" onclick="closeModal('modal-logout')">Cancelar</button>
+  </div>
+</div>
+
+<!-- Confirmar borrar cuenta -->
+<div class="overlay" id="modal-delete" onclick="if(event.target===this)closeModal('modal-delete')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" style="color:#ee4444">⚠️ Borrar cuenta</div>
+    <p style="color:var(--text2);font-size:.88rem;margin-bottom:1rem">Esta acción es <strong>permanente e irreversible</strong>. Se eliminarán todos tus mensajes, grupos, historias y notas.</p>
+    <button class="modal-btn danger" onclick="deleteAccount()">Sí, borrar mi cuenta</button>
+    <button class="modal-btn ghost" onclick="closeModal('modal-delete')">Cancelar</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="/js/api.js"></script>
+<script src="/js/app.js"></script>
+<script>
+// Filter list items locally
+function filterItems(listId,q){
+  document.querySelectorAll(`#${listId} .item`).forEach(item=>{
+    const name=item.querySelector('.item-name')?.textContent?.toLowerCase()||'';
+    item.style.display=name.includes(q.toLowerCase())?'':'none';
+  });
+}
+// Show group options from chat header
+function showChatOptions(){
+  if(S.chat?.type==='group'){
+    $('chat-opts-title').textContent=S.chat.name;
+    openModal('modal-chat-opts');
+  }
+}
+// Show more button only for groups
+const origOpen=openChat;
+</script>
+</body>
+</html>
