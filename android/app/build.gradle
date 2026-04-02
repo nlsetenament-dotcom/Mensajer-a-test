@@ -11,7 +11,7 @@ android {
         versionCode 1
         versionName "1.0"
     }
-    
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
@@ -19,9 +19,8 @@ android {
 }
 
 dependencies {
-    // Estas son las que fallaban antes
-    implementation "com.capacitorjs:android:5.7.0"
-    implementation "com.capacitorjs:core:5.7.0"
+    // Cambiamos a la versión 6.0.0 para asegurar que la encuentre
+    implementation "com.getcapacitor:android:6.0.0"
     
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
